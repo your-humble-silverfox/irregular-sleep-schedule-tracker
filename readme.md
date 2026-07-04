@@ -30,3 +30,7 @@ Currently, (03.07.2026), the following functionality is implemented:
 ### Dependencies
 
 - `PyQT6`
+
+### Installation
+
+In order to install the application head to releases page and download the setup wizard, which will install the application on your system
