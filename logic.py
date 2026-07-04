@@ -72,11 +72,37 @@ class AppLogic():
 
         return comparison_result
 
-    
+    # ? Может быть сделать словарь ?
+    # TODO: Добавить логирование данных с целью визуализации
     def window_prediction(self):
+
+        prediction_string = ""
+
         if self.is_awake:
-            predicted_sleep = self.awake_time.addSecs(self.average_awake)
-            return predicted_sleep
+            predicted_sleep = self.awake_time.addSecs(int(self.average_awake))
+            predicted_awake = self.sleep_time.addSecs(int(self.average_sleep))
+            predicted_sleep = predicted_awake.addSecs(int(self.average_sleep))
+            
         else:
-            predicted_awake = self.sleep_time.addSecs(self.average_sleep)
-            return predicted_awake
+            predicted_awake = self.sleep_time.addSecs(int(self.average_sleep))
+            predicted_sleep = predicted_awake.addSecs(int(self.average_sleep))
+
+        for i in range(7):
+            
+            awake_day = predicted_awake.toString('d')
+            awake_month = predicted_awake.toString('MMMM')
+            awake_hour = predicted_awake.toString('hh:mm')
+
+            sleep_day = predicted_sleep.toString('d')
+            sleep_month = predicted_sleep.toString('MMMM')
+            sleep_hour = predicted_sleep.toString('hh:mm')
+            
+            prediction_string += (
+                f"Проснешься примерно {awake_day} {awake_month} в {awake_hour}, "
+                f"будешь активен до {sleep_day} {sleep_month} {sleep_hour} \n"
+            )
+
+            predicted_awake = predicted_sleep.addSecs(int(self.average_sleep))
+            predicted_sleep = predicted_awake.addSecs(int(self.average_awake))
+
+        return prediction_string

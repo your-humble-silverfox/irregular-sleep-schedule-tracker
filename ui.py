@@ -90,7 +90,7 @@ class MainWindow(QWidget, AppLogic):
     def __init__(self, AppLogic, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setWindowTitle("Трекер Нерегулярного Сна")
-        self.setMinimumSize(400,200)
+        self.setMinimumSize(600,350)
 
         self.logic = AppLogic
         
@@ -154,9 +154,12 @@ class MainWindow(QWidget, AppLogic):
         # «Спишь в среднем 11ч42м (-18м от цели), 
         # бодрствуешь 16ч15м (+15м). Цикл 27ч57м, 
         # убегаешь на +3ч57м каждые сутки».  
-        # prediction = self.logic.window_prediction()
+        prediction = self.logic.window_prediction()
+
+        # TODO: переписать созданиме этой строки по аналогии с prediction
         drift_string = f"В среднем цикл {abs(int(data["average_cycle"])//3600):02d}:{(abs(int(data["average_cycle"])%3600)//60):02d}, отклоняешься от цели на {int(data["delta_cycle"])//3600:02d}:{(abs(int(data["delta_cycle"])%3600)//60):02d} \nВ среднем спишь {abs(int(data["average_sleep"])//3600):02d}:{(abs(int(data["average_sleep"])%3600)//60):02d}, отклоняешься от цели на {int(data["delta_sleep"])//3600:02d}:{(abs(int(data["delta_sleep"])%3600)//60):02d} \nВ среднем бодрствуешь {abs(int(data["average_awake"])//3600):02d}:{(abs(int(data["average_awake"])%3600)//60):02d}, отклоняешься от цели на {int(data["delta_awake"]//3600):02d}:{(abs(int(data["delta_awake"])%3600)//60):02d}"
         self.actual_v_target.setText(drift_string)
+        self.assumption.setText(prediction)
 
     def set_wakeup_time(self):
 
