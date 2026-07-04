@@ -1,6 +1,8 @@
 from ui import *
 import sys
+import ctypes
 from PyQt6.QtWidgets import QApplication, QStackedWidget
+from PyQt6.QtGui import QIcon
 from pathlib import Path
 from logic import AppLogic
 
@@ -26,6 +28,12 @@ else:
     stack.setCurrentWidget(config_window)
 
 stack.setWindowTitle("Трекер Нерегулярного Цикла Сна")
+theme = app.styleHints().colorScheme()
+if theme == Qt.ColorScheme.Light:
+    stack.setWindowIcon(QIcon("icon_back.png"))
+else:
+    stack.setWindowIcon(QIcon("icon_white.png"))
+
 stack.show()
 
 sys.exit(app.exec())

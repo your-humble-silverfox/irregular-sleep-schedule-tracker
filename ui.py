@@ -154,11 +154,12 @@ class MainWindow(QWidget, AppLogic):
         # «Спишь в среднем 11ч42м (-18м от цели), 
         # бодрствуешь 16ч15м (+15м). Цикл 27ч57м, 
         # убегаешь на +3ч57м каждые сутки».  
-        prediction = self.logic.window_prediction()
+        # prediction = self.logic.window_prediction()
         drift_string = f"В среднем цикл {abs(int(data["average_cycle"])//3600):02d}:{(abs(int(data["average_cycle"])%3600)//60):02d}, отклоняешься от цели на {int(data["delta_cycle"])//3600:02d}:{(abs(int(data["delta_cycle"])%3600)//60):02d} \nВ среднем спишь {abs(int(data["average_sleep"])//3600):02d}:{(abs(int(data["average_sleep"])%3600)//60):02d}, отклоняешься от цели на {int(data["delta_sleep"])//3600:02d}:{(abs(int(data["delta_sleep"])%3600)//60):02d} \nВ среднем бодрствуешь {abs(int(data["average_awake"])//3600):02d}:{(abs(int(data["average_awake"])%3600)//60):02d}, отклоняешься от цели на {int(data["delta_awake"]//3600):02d}:{(abs(int(data["delta_awake"])%3600)//60):02d}"
         self.actual_v_target.setText(drift_string)
 
     def set_wakeup_time(self):
+
         if self.handling_wakeup:
             return
         
@@ -175,7 +176,8 @@ class MainWindow(QWidget, AppLogic):
 
             with open("sleep_log.json","w",encoding="UTF-8") as file:
                 json.dump(log,file,indent=4)
-
+            
+            self.handling_wakeup = False
             self.stack.setCurrentWidget(self.main_page)
 
     def fell_asleep_clicked(self):
