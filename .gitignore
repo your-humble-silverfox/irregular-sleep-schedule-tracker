@@ -4,3 +4,5 @@
 /build
 /dist
 main.spec
+comparison_last_string.txt
+prediction_last_string.txt

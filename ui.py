@@ -15,6 +15,11 @@ from pathlib import Path
 import sys
 from logic import *
 
+# ! Максимально проклятый костыль, нужный во славу нужды, часть первая - константы !
+# TODO: Переписать лог прогноза и сравнения с этой шляпы при первой же возможности
+LAST_PROGNOSIS_PATH = Path("prediction_last_string.txt")
+LAST_COMPARISON_PATH = Path("comparison_last_string.txt")
+
 class ConfigWindow(QWidget):
     def __init__(self, switch_to_main, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -112,9 +117,23 @@ class MainWindow(QWidget, AppLogic):
         self.update_stats_btn.setMinimumHeight(50)
         self.update_stats_btn.clicked.connect(self.update_data)
 
-        self.assumption = QLabel("Недостаточно данных для прогноза периода активности")
+        # ! Максимально проклятый костыль часть 2 - условия !
+        # TODO: исправить при первой возможности
+        if LAST_PROGNOSIS_PATH.is_file():
+            with open(LAST_PROGNOSIS_PATH, 'r') as file:
+                label_text = file.read()
 
-        self.actual_v_target = QLabel("Недостаточно данных для сравнения с целевыми значениями")
+            self.assumption = QLabel(label_text)
+        else:
+            self.assumption = QLabel("Недостаточно данных для прогноза периода активности")
+
+        if LAST_COMPARISON_PATH.is_file():
+            with open(LAST_COMPARISON_PATH, 'r') as file:
+                label_text = file.read()
+
+            self.actual_v_target = QLabel(label_text)
+        else:
+            self.actual_v_target = QLabel("Недостаточно данных для сравнения с целевыми значениями")
 
         self.get_wakeup_time = QTimeEdit()
         self.get_wakeup_time.setDisplayFormat("HH:mm")
@@ -150,16 +169,12 @@ class MainWindow(QWidget, AppLogic):
     def update_data(self):
         self.logic.load_data()
         self.logic.durations_calculators()
-        data = self.logic.drift_calculator()
-        # «Спишь в среднем 11ч42м (-18м от цели), 
-        # бодрствуешь 16ч15м (+15м). Цикл 27ч57м, 
-        # убегаешь на +3ч57м каждые сутки».  
-        prediction = self.logic.window_prediction()
 
-        # TODO: переписать созданиме этой строки по аналогии с prediction
-        drift_string = f"В среднем цикл {abs(int(data["average_cycle"])//3600):02d}:{(abs(int(data["average_cycle"])%3600)//60):02d}, отклоняешься от цели на {int(data["delta_cycle"])//3600:02d}:{(abs(int(data["delta_cycle"])%3600)//60):02d} \nВ среднем спишь {abs(int(data["average_sleep"])//3600):02d}:{(abs(int(data["average_sleep"])%3600)//60):02d}, отклоняешься от цели на {int(data["delta_sleep"])//3600:02d}:{(abs(int(data["delta_sleep"])%3600)//60):02d} \nВ среднем бодрствуешь {abs(int(data["average_awake"])//3600):02d}:{(abs(int(data["average_awake"])%3600)//60):02d}, отклоняешься от цели на {int(data["delta_awake"]//3600):02d}:{(abs(int(data["delta_awake"])%3600)//60):02d}"
+        drift_string = self.logic.drift_calculator()
+        prediction_string = self.logic.window_prediction()
+
         self.actual_v_target.setText(drift_string)
-        self.assumption.setText(prediction)
+        self.assumption.setText(prediction_string)
 
     def set_wakeup_time(self):
 

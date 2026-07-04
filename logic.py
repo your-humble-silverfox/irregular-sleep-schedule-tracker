@@ -57,20 +57,38 @@ class AppLogic():
         average_cycle = self.average_awake+self.average_sleep
         target_cycle = self.config["target_sleep_seconds"]+self.config["target_awake_seconds"]
         delta_cycle = average_cycle - target_cycle
-        detla_sleep = self.average_sleep - self.config["target_sleep_seconds"]
+        delta_sleep = self.average_sleep - self.config["target_sleep_seconds"]
         delta_awake = self.average_awake - self.config["target_awake_seconds"]
 
         comparison_result = {
             "average_cycle": average_cycle,
             "target_cycle": target_cycle,
-            "delta_sleep": detla_sleep,
+            "delta_sleep": delta_sleep,
             "delta_awake": delta_awake,
             "delta_cycle": delta_cycle,
             "average_sleep": self.average_sleep,
             "average_awake": self.average_awake
         }
+        
+        # * "// 3600" - в часы, % 3600 // 60 - в минуты *
+        average_awake_string = f"{int(abs(self.average_awake // 3600)):02d}:{int((abs(self.average_awake %3600) //60)):02d}"
+        average_sleep_string = f"{int(abs(self.average_sleep // 3600)):02d}:{int((abs(self.average_sleep %3600) //60)):02d}"
+        average_cycle_string = f"{int(abs(average_cycle // 3600)):02d}:{int((abs(average_cycle%3600)//60)):02d}"
 
-        return comparison_result
+        delta_awake_string = f"{int(delta_awake // 3600):02d}:{int((abs(delta_awake % 3600) // 60)):02d}"
+        delta_sleep_string = f"{int(delta_sleep // 3600):02d}:{int((abs(delta_sleep % 3600) // 60)):02d}"
+        delta_cycle_string = f"{int(delta_cycle // 3600):02d}:{int((abs(delta_cycle % 3600) // 60)):02d}"
+
+        comparsion_result_string = "\n".join((
+            f"В среднем бодрствуешь {average_awake_string}, отклоняешься от цели на {delta_awake_string}",
+            f"В среднем спишь {average_sleep_string}, отклоняешься от цели на {delta_sleep_string}",
+            f"В среднем цикл {average_cycle_string}, отклоняешься от цели на {delta_cycle_string}"
+        ))
+
+        with open('comparison_last_string.txt', 'w') as file:
+            file.write(comparsion_result_string)
+        
+        return comparsion_result_string
 
     # ? Может быть сделать словарь ?
     # TODO: Добавить логирование данных с целью визуализации
@@ -104,5 +122,9 @@ class AppLogic():
 
             predicted_awake = predicted_sleep.addSecs(int(self.average_sleep))
             predicted_sleep = predicted_awake.addSecs(int(self.average_awake))
+
+
+        with open('prediction_last_string.txt', 'w') as file:
+            file.write(prediction_string)
 
         return prediction_string
