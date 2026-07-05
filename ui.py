@@ -181,22 +181,26 @@ class MainWindow(QWidget, AppLogic):
         if self.handling_wakeup:
             return
         
-        else:
-            self.handling_wakeup = True
-            current_date = QDate.currentDate()
-            wakeup_time = self.get_wakeup_time.time()
-            
-            timestamp = QDateTime(current_date,wakeup_time)
-            with open("sleep_log.json","r",encoding="UTF-8") as file:
-                log = json.load(file)
+        
+        self.handling_wakeup = True
+        current_date = QDate.currentDate()
+        current_time = QTime.currentTime()
+        wakeup_time = self.get_wakeup_time.time()
 
-            log.append({"ts":timestamp.toString(),"type":"wake","source":"manual"})
+        if wakeup_time > current_time:
+            current_date = current_date.addDays(-1)
+        
+        timestamp = QDateTime(current_date,wakeup_time)
+        with open("sleep_log.json","r",encoding="UTF-8") as file:
+            log = json.load(file)
 
-            with open("sleep_log.json","w",encoding="UTF-8") as file:
-                json.dump(log,file,indent=4)
-            
-            self.handling_wakeup = False
-            self.stack.setCurrentWidget(self.main_page)
+        log.append({"ts":timestamp.toString(),"type":"wake","source":"manual"})
+
+        with open("sleep_log.json","w",encoding="UTF-8") as file:
+            json.dump(log,file,indent=4)
+        
+        self.handling_wakeup = False
+        self.stack.setCurrentWidget(self.main_page)
 
     def fell_asleep_clicked(self):
         current_date = QDate.currentDate()

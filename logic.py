@@ -98,8 +98,7 @@ class AppLogic():
 
         if self.is_awake:
             predicted_sleep = self.awake_time.addSecs(int(self.average_awake))
-            predicted_awake = self.sleep_time.addSecs(int(self.average_sleep))
-            predicted_sleep = predicted_awake.addSecs(int(self.average_sleep))
+            predicted_awake = predicted_sleep.addSecs(int(self.average_sleep))
             
         else:
             predicted_awake = self.sleep_time.addSecs(int(self.average_sleep))
