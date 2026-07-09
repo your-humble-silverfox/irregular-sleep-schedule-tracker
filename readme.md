@@ -18,14 +18,12 @@ Currently, (03.07.2026), the following functionality is implemented:
 
 - Initial application configuration
 - Data storing
-- Comparing actual data with target
 - Sleep/Awake Cycle Prognosing
+- Prognosis data storing and visualization
 
 #### To be implemented
 
-- Prognosis data storing and visualization
-- System Tray Integration
-- Automatic marking of sleep period beginning accounting for user error
+- Ability to use average data to fill-in values forgotten by user
 
 ### Dependencies
 
